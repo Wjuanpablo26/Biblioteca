@@ -8,11 +8,12 @@ public class Libro {
     private String editorial;
     private String fecha;
     private int unidadesDisponibles;
+    private double precio;
 
     /*
      * Constructor de la clase Libro
      */
-    public Libro(String codigo, String isbn, String autor, String titulo, String editorial, String fecha, int unidadesDisponibles) {
+    public Libro(String codigo, String isbn, String autor, String titulo, String editorial, String fecha, int unidadesDisponibles, double precio) {
         this.codigo = codigo;
         this.isbn = isbn;
         this.autor = autor;
@@ -20,6 +21,7 @@ public class Libro {
         this.editorial = editorial;
         this.fecha = fecha;
         this.unidadesDisponibles = unidadesDisponibles;
+        this.precio = precio;
     }
 
     /*
@@ -71,6 +73,14 @@ public class Libro {
 
     public void setFecha(String fecha) {
         this.fecha = fecha;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
     }
 
     /*

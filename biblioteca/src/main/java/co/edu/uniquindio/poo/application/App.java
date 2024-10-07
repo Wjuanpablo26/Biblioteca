@@ -22,13 +22,13 @@ public class App {
         biblioteca.crearEstudiante("Maria Lopez", "444555666", "555-4321", "maria@example.com");
 
         // Crear libros
-        biblioteca.crearLibro("L001", "978-3-16-148410-0", "Gabriel Garcia Marquez", "Cien años de soledad", "Editorial De Medellin", "2023-01-01", 5);
-        biblioteca.crearLibro("L002", "978-1-23-456789-7", "Justin Roilan", "Rick And Morty y sus aventuras", "Editorial De Bogota", "2023-02-01", 3);
+        biblioteca.crearLibro("L001", "978-3-16-148410-0", "Gabriel Garcia Marquez", "Cien años de soledad", "Editorial De Medellin", "2023-01-01", 5,4);
+        biblioteca.crearLibro("L002", "978-1-23-456789-7", "Justin Roilan", "Rick And Morty y sus aventuras", "Editorial De Bogota", "2023-02-01", 3,3);
 
         // Crear detalles de préstamo
         List<DetallePrestamo> detallesPrestamo1 = new ArrayList<>();
-        detallesPrestamo1.add(new DetallePrestamo(biblioteca.consultarLibroPorCodigo("L001"), 2));
-        detallesPrestamo1.add(new DetallePrestamo(biblioteca.consultarLibroPorCodigo("L002"), 1));
+        detallesPrestamo1.add(new DetallePrestamo(biblioteca.consultarLibroPorCodigo("L001"), 3));
+        detallesPrestamo1.add(new DetallePrestamo(biblioteca.consultarLibroPorCodigo("L002"), 3));
 
         // Crear préstamo
         biblioteca.crearPrestamo("P001", biblioteca.consultarEstudiantePorCedula("111222333"), detallesPrestamo1, new Date(), new Date());
@@ -50,7 +50,7 @@ public class App {
         System.out.println("Cantidad de préstamos del libro "+ libroConsultado.getTitulo() + ": "   + cantidadPrestamos);
 
         // Reemplazar un libro
-        Libro nuevoLibro = new Libro("L001", "978-3-16-148410-0", "Autor C", "Libro C", "Editorial C", "2024-01-01", 10);
+        Libro nuevoLibro = new Libro("L001", "978-3-16-148410-0", "Autor C", "Libro C", "Editorial C", "2024-01-01", 10,5);
         biblioteca.reemplazarLibro("L001", nuevoLibro);
 
         // Mostrar Estudiante con más préstamos

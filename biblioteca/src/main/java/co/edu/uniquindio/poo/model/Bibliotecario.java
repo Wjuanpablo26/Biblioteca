@@ -1,40 +1,36 @@
 package co.edu.uniquindio.poo.model;
 
-public class Bibliotecario {
-    private String nombre;
-    private String cedula;
-    private String telefono;
-    private String correo;
+public class Bibliotecario extends Persona{
+    
     private double salario;
-    private int Ingreso;
+    private int anoIngreso;
 
     /*
      * Constructor de la clase Bibliotecario
      */
-    public Bibliotecario(String nombre, String cedula, String telefono, String correo, double salario, int Ingreso) {
-        this.nombre = nombre;
-        this.cedula = cedula;
-        this.telefono = telefono;
-        this.correo = correo;
+    public Bibliotecario(String nombre, String cedula, String telefono, String correo, double salario, int anoIngreso) {
+        super(nombre, cedula, telefono, correo);
         this.salario = salario;
-        this.Ingreso = Ingreso;
+        this.anoIngreso = anoIngreso;
     }
 
-    // Getters y Setters
+    /*
+     *  Metodos gets y sets
+     */
     public String getNombre() {
-        return nombre;
+        return super.getNombre();
     }
 
     public String getCedula() {
-        return cedula;
+        return super.getCedula();
     }
 
     public String getTelefono() {
-        return telefono;
+        return super.getTelefono();
     }
 
     public String getCorreo() {
-        return correo;
+        return super.getCorreo();
     }
 
     public double getSalario() {
@@ -42,31 +38,31 @@ public class Bibliotecario {
     }
 
     public void setNombre(String nombre) {
-        this.nombre = nombre;
+        super.setNombre(nombre);
     }
 
     public void setCedula(String cedula) {
-        this.cedula = cedula;
+        super.setCedula(cedula);
     }
 
     public void setTelefono(String telefono) {
-        this.telefono = telefono;
+        super.setTelefono(telefono);
     }
 
     public void setCorreo(String correo) {
-        this.correo = correo;
+        super.setCorreo(correo);
     }
 
     public void setSalario(double salario) {
         this.salario = salario;
     }
 
-    public int getIngreso() {
-        return Ingreso;
+    public int getAnoIngreso() {
+        return anoIngreso;
     }
 
-    public void setIngreso(int Ingreso) {
-        this.Ingreso = Ingreso;
+    public void setIngreso(int anoIngreso) {
+        this.anoIngreso = anoIngreso;
     }
 
     /*
@@ -81,8 +77,17 @@ public class Bibliotecario {
     /*
      * Metodo para calcular la antiguedad del bibliotecario
      */
-    public int calcularAntiguedad(int Ingreso) {
-        return 2024 - Ingreso;
+    public int calcularAntiguedad(int anoIngreso) {
+        return 2024 - anoIngreso;
     }
+
+    /*
+     * Metodo para mostrar la informacion de un bibliotecario
+     */
+    @Override
+    public String toString() {
+        return "Bibliotecario [nombre=" + getNombre() + ", cedula=" + getCedula() + ", telefono=" + getTelefono() + ", correo=" + getCorreo() + ", salario=" + salario + ", anoIngreso=" + anoIngreso + "]";
+    }
+
 }
 

@@ -1,61 +1,57 @@
 package co.edu.uniquindio.poo.model;
 
-public class Estudiante {
-    private String nombre;
-    private String cedula;
-    private String telefono;
-    private String correo;
+public class Estudiante extends Persona {
+    
 
     /*
      * Constructor de la clase Estudiante
      */
     public Estudiante(String nombre, String cedula, String telefono, String correo) {
-        this.nombre = nombre;
-        this.cedula = cedula;
-        this.telefono = telefono;
-        this.correo = correo;
+        super(nombre, cedula, telefono, correo);
     }
 
+    
     /*
      * Metodos gets y sets
      */
     public String getNombre() {
-        return nombre;
+        return super.getNombre();
     }
 
     public String getCedula() {
-        return cedula;
+        return super.getCedula();
     }
 
     public String getTelefono() {
-        return telefono;
+        return super.getTelefono();
     }
 
     public String getCorreo() {
-        return correo;
+        return super.getCorreo();
     }
 
     public void setNombre(String nombre) {
-        this.nombre = nombre;
+        super.setNombre(nombre);
     }
 
     public void setCedula(String cedula) {
-        this.cedula = cedula;
+        super.setCedula(cedula);
     }
 
     public void setTelefono(String telefono) {
-        this.telefono = telefono;
+        super.setTelefono(telefono);
     }
 
     public void setCorreo(String correo) {
-        this.correo = correo;
+        super.setCorreo(correo);
     }
 
     /*
      * Metodo para mostrar la informacion de un estudiante
      */
-    public String mostrarInformacion() {
-        return "Nombre: " + nombre + ", Cédula: " + cedula + ", Teléfono: " + telefono + ", Correo: " + correo;
+    @Override
+    public String toString() {
+        return "Estudiante [nombre=" + getNombre() + ", cedula=" + getCedula() + ", telefono=" + getTelefono() + ", correo=" + getCorreo() + "]";
     }
     
 }

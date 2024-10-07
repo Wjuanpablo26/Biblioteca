@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.Date;
 
 public class Biblioteca {
@@ -71,24 +72,21 @@ public class Biblioteca {
      * Metodo para crear un bibliotecario
      */
     public void crearBibliotecario(String nombre, String cedula, String telefono, String correo, double salario, int Ingreso) {
-        Bibliotecario bibliotecario = new Bibliotecario(nombre, cedula, telefono, correo, salario, Ingreso);
-        bibliotecarios.add(bibliotecario);
+        bibliotecarios.add(new Bibliotecario(nombre, cedula, telefono, correo, salario, Ingreso));
     }
     
     /*
-     * Metodo papara crear un estudiante
+     * Metodo para crear un estudiante
      */
     public void crearEstudiante(String nombre, String cedula, String telefono, String correo) {
-        Estudiante estudiante = new Estudiante(nombre, cedula, telefono, correo);
-        estudiantes.add(estudiante);
+        estudiantes.add(new Estudiante(nombre, cedula, telefono, correo));
     }
     
     /*
      * Metodo para crear un libro
      */
-    public void crearLibro(String codigo, String isbn, String autor, String titulo, String editorial, String fecha, int unidadesDisponibles) {
-        Libro libro = new Libro(codigo, isbn, autor, titulo, editorial, fecha, unidadesDisponibles);
-        libros.put(codigo, libro);
+    public void crearLibro(String codigo, String isbn, String autor, String titulo, String editorial, String fecha, int unidadesDisponibles,double precio) {
+        libros.put(codigo, new Libro(codigo, isbn, autor, titulo, editorial, fecha, unidadesDisponibles, precio));
     }
     
     /*
@@ -102,27 +100,20 @@ public class Biblioteca {
      * Consultar un estudiante por su cedula
      */
     public Estudiante consultarEstudiantePorCedula(String cedula) {
-        for (Estudiante estudiante : estudiantes) {
-            if (estudiante.getCedula().equals(cedula)) {
-                return estudiante;
-            }
-        }
-        return null;
+        return estudiantes.stream()
+                .filter(estudiante -> estudiante.getCedula().equals(cedula))
+                .findFirst()
+                .orElse(null);
     }
-    
+
     /*
      * Metodo para consultar la cantidad de prestamos de un libro por su nombre
      */
     public int consultarCantidadPrestamosPorNombre(String nombre) {
-        int cantidad = 0;
-        for (Prestamo prestamo : prestamos.values()) {
-            for (DetallePrestamo detalle : prestamo.getDetalles()) {
-                if (detalle.getLibro().getTitulo().equals(nombre)) {
-                    cantidad++;
-                }
-            }
-        }
-        return cantidad;
+        return (int) prestamos.values().stream()
+                .flatMap(prestamo -> prestamo.getDetalles().stream())
+                .filter(detalle -> detalle.getLibro().getTitulo().equals(nombre))
+                .count();
     }
     
     /*
@@ -138,11 +129,8 @@ public class Biblioteca {
     public void crearPrestamo(String codigo, Estudiante estudiante, List<DetallePrestamo> detalles, Date fechaPrestamo, Date fechaEntrega) {
         Prestamo prestamo = new Prestamo(codigo, estudiante, detalles, fechaPrestamo, fechaEntrega);
         prestamos.put(codigo, prestamo);
-        for (DetallePrestamo detalle : detalles) {
-            detalle.getLibro().actualizarUnidadesDisponibles(-detalle.getCantidad());
-        }
+        detalles.forEach(detalle -> detalle.getLibro().actualizarUnidadesDisponibles(-detalle.getCantidad()));
     }
-    
 
     /*
      * Metodo para adicionar un libro al prestamo
@@ -152,18 +140,19 @@ public class Biblioteca {
         prestamo.getDetalles().add(detalle);
         detalle.getLibro().actualizarUnidadesDisponibles(-detalle.getCantidad());
     }
-    
+
     /*
      * Metodo para entregar un prestamo
      */
-    public double entregarPrestamo(String codigoPrestamo, Date fechaEntrega) {
-        Prestamo prestamo = prestamos.get(codigoPrestamo);
-        prestamo.setFechaEntrega(fechaEntrega);
-        double costo = prestamo.calcularCosto();
-        for (DetallePrestamo detalle : prestamo.getDetalles()) {
-            detalle.getLibro().actualizarUnidadesDisponibles(detalle.getCantidad());
-        }
-        return costo;
+    public double entregarPrestamo(String codigoPrestamo, Date fechaDevolucion) {
+        return prestamos.values().stream()
+                .filter(prestamo -> prestamo.getCodigo().equals(codigoPrestamo))
+                .findFirst()
+                .map(prestamo -> {
+                    prestamo.setFechaEntrega(fechaDevolucion);
+                    return prestamo.calcularCosto();
+                })
+                .orElse(0.0);
     }
 
     /*
@@ -177,64 +166,50 @@ public class Biblioteca {
      * Metodo para mostrar la cantidad de libros prestados por cada empleado
      */
     public Map<Bibliotecario, Integer> cantidadLibrosPrestadosPorEmpleado() {
-        Map<Bibliotecario, Integer> librosPrestadosPorEmpleado = new HashMap<>();
-        for (Prestamo prestamo : prestamos.values()) {
-            Bibliotecario bibliotecario = prestamo.getBibliotecario();
-            librosPrestadosPorEmpleado.put(bibliotecario, librosPrestadosPorEmpleado.getOrDefault(bibliotecario, 0) + prestamo.getDetalles().size());
-        }
-        return librosPrestadosPorEmpleado;
+        return prestamos.values().stream()
+                .collect(Collectors.toMap(
+                        Prestamo::getBibliotecario,
+                        prestamo -> prestamo.getDetalles().size(),
+                        Integer::sum
+                ));
     }
-    
+
     /*
      * Metodo para consultar el estudiante con mas prestamos
      */
     public Estudiante estudianteConMasPrestamos() {
-        Map<Estudiante, Integer> prestamosPorEstudiante = new HashMap<>();
-        for (Prestamo prestamo : prestamos.values()) {
-            Estudiante estudiante = prestamo.getEstudiante();
-            prestamosPorEstudiante.put(estudiante, prestamosPorEstudiante.getOrDefault(estudiante, 0) + 1);
-        }
-        Estudiante maxEstudiante = null;
-        int maxPrestamos = 0;
-        for (Map.Entry<Estudiante, Integer> entry : prestamosPorEstudiante.entrySet()) {
-            if (entry.getValue() > maxPrestamos) {
-                maxPrestamos = entry.getValue();
-                maxEstudiante = entry.getKey();
-            }
-        }
-        return maxEstudiante;
+        return prestamos.values().stream()
+                .collect(Collectors.groupingBy(Prestamo::getEstudiante, Collectors.counting()))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
     }
-    
+
     /*
      * Metodo para consultar el total de dinero recaudado por la biblioteca
      */
     public double totalDineroRecaudado() {
-        double total = 0;
-        for (Prestamo prestamo : prestamos.values()) {
-            total += prestamo.calcularCosto();
-        }
-        return total;
+        return prestamos.values().stream()
+                .mapToDouble(Prestamo::calcularCosto)
+                .sum();
     }
     
     /*
      * Metodo para consultar el total de dinero a pagar a los bibliotecarios
      */
     public double totalDineroAPagarBibliotecarios() {
-        double total = 0;
-        for (Bibliotecario bibliotecario : bibliotecarios) {
-            double salarioBase = bibliotecario.getSalario();
-            double comision = 0;
-            for (Prestamo prestamo : prestamos.values()) {
-                if (prestamo.getEstudiante().getCedula().equals(bibliotecario.getCedula())) {
-                    comision += prestamo.calcularCosto() * 0.2; 
-                }
-            }
-            int antiguedad = bibliotecario.calcularAntiguedad(bibliotecario.getIngreso()); 
-            total += salarioBase + comision + (comision * 0.02 * antiguedad);
-        }
-        return total;
+        return bibliotecarios.stream()
+                .mapToDouble(bibliotecario -> {
+                    double salarioBase = bibliotecario.getSalario();
+                    double comision = prestamos.values().stream()
+                            .filter(prestamo -> prestamo.getEstudiante().getCedula().equals(bibliotecario.getCedula()))
+                            .mapToDouble(prestamo -> prestamo.calcularCosto() * 0.2)
+                            .sum();
+                    int antiguedad = bibliotecario.calcularAntiguedad(bibliotecario.getAnoIngreso());
+                    return salarioBase + comision + (comision * 0.02 * antiguedad);
+                })
+                .sum();
     }
-
-
 }
 

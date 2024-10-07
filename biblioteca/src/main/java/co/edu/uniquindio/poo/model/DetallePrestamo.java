@@ -18,7 +18,7 @@ public class DetallePrestamo {
      * Metodo para calcular el subtotal
      */
     private double calcularSubtotal() {
-        return cantidad * 1.0; 
+        return cantidad * libro.getPrecio(); 
     }
 
     /*
@@ -34,6 +34,10 @@ public class DetallePrestamo {
 
     public double getSubtotal() {
         return subtotal;
+    }
+
+    public double getPrecio() {
+        return libro.getPrecio();
     }
 }
 
